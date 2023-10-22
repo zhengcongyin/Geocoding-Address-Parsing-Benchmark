@@ -1,0 +1,7 @@
+datasets
+transformers
+evaluate
+seqeval
+openai==0.27.0
+markupsafe==2.0.1
+wandb
