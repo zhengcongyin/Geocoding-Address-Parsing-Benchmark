@@ -12,8 +12,11 @@ from IPython.display import Markdown, display
 from IPython.core.display import display, HTML
 import os
 
+few_shots = [ [ '467 W BROOKWOOD CIR OZARK AL 36360', [ { 'E': '467', 'T': 'B-HOUSENUM' }, { 'E': 'W', 'T': 'B-PREDIRECTIONAL' }, { 'E': 'BROOKWOOD', 'T': 'B-STREET' }, { 'E': 'CIR', 'T': 'B-ROADTYPE' }, { 'E': 'OZARK', 'T': 'B-CITY' }, { 'E': 'AL', 'T': 'B-STATE' }, { 'E': '36360', 'T': 'B-POSTAL' }, ], ],
+ [ '27195 DORY RD W SALVO NC 27972', [ { 'E': '27195', 'T': 'B-HOUSENUM' }, { 'E': 'DORY', 'T': 'B-STREET' }, { 'E': 'RD', 'T': 'B-ROADTYPE' }, { 'E': 'W', 'T': 'B-POSTDIRECTIONAL' }, { 'E': 'SALVO', 'T': 'B-CITY' }, { 'E': 'NC', 'T': 'B-STATE' }, { 'E': '27972', 'T': 'B-POSTAL' }, ], ],
+ [ '118 LUKE HICKS RD HAZEL GREEN AL 35750', [ { 'E': '118', 'T': 'B-HOUSENUM' }, { 'E': 'LUKE', 'T': 'B-STREET' }, { 'E': 'HICKS', 'T': 'I-STREET' }, { 'E': 'RD', 'T': 'B-ROADTYPE' }, { 'E': 'HAZEL', 'T': 'B-CITY' }, { 'E': 'GREEN', 'T': 'I-CITY' }, { 'E': 'AL', 'T': 'B-STATE' }, { 'E': '35750', 'T': 'B-POSTAL' }, ], ],]
 
-def gpt3_prediction(eval_dataset, label_list, eval_number=50, is_skip=True):
+def gpt3_prediction(eval_dataset, label_list, is_skip=True):
     from promptify.models.nlp.openai_model import OpenAI
     from promptify.prompts.nlp.prompter import Prompter
     model = OpenAI(api_key="sk-")
@@ -21,14 +24,13 @@ def gpt3_prediction(eval_dataset, label_list, eval_number=50, is_skip=True):
     true_predictions = []
     true_labels = []
     for eval_data in tqdm(eval_dataset):
-        if count > eval_number:
-            break
         sent = " ".join(eval_data["tokens"])
         prediction = []
         true_label = [label_list[x] for x in eval_data["ner_tags"]]
 
         result = nlp_prompter.fit('ner.jinja',
                                   domain='street addresses',
+                                  examples=few_shots,
                                   text_input=sent,
                                   labels=label_list)
         try:
@@ -99,9 +101,8 @@ def run_predict(sentences, labels, model_name, eval_dataset, label_list, verbose
         for p, tags, token in zip(pred, eval_dataset['ner_tags'], eval_dataset['tokens']):
             try:
                 pred_tags = [x['entity'] for x in p]
-                tokenized = [postprocess(x['word']) for x in p]
-                pred_tags, pred_text = combine_text_from_index(p)
-                truth_tags, truth_text = [label_id[x] for x in tags], token
+                pred_tags = combine_text_from_index(p)
+                truth_tags = [label_id[x] for x in tags], token
                 assert len(pred_tags) == len(truth_tags)
                 true_tags = [label_id[x] for x in tags]
                 true_tags = combine_labels(true_tags)
@@ -110,7 +111,7 @@ def run_predict(sentences, labels, model_name, eval_dataset, label_list, verbose
             except Exception as error:
                 continue
         res = seqeval.compute(predictions=true_predictions, references=true_labels)
+        print(res)
     else:
-        tokenized = [postprocess(x['word']) for x in pred]
         pred = [x['entity'] for x in pred]
 

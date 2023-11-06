@@ -154,7 +154,7 @@ def combine_text_from_index(p):
     current_text = ""
     current_start = 0
     for x in p:
-        word = postprocess(x['word']);
+        word = postprocess(x['word'])
         if current_start == x['start']:
             if x['start'] == 0:
                 combined_tags.append(x['entity'])
@@ -163,7 +163,7 @@ def combine_text_from_index(p):
             current_text += '##'
             current_text += word.upper()
             combined_tags.append(x['entity'])
-        current_start = x['end'];
+        current_start = x['end']
     return combined_tags, current_text.split('##')
 
 
