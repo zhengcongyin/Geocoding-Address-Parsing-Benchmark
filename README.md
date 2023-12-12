@@ -32,6 +32,16 @@ The input errors and variations that the benchmark dataset contains are detected
 
 ![image](https://github.com/zhengcongyin/Geocoding-Address-Parsing-Benchmark/assets/10716937/e5ba0f0b-899f-435c-b097-89410e184002)
 
+The figures displayed below, from top to bottom, illustrate the distribution of input errors and variations within the Training, Validation, and Test sets, respectively.
+
+<figure>
+  <img src="https://github.com/zhengcongyin/Geocoding-Address-Parsing-Benchmark/assets/10716937/05ce5025-6a80-415d-853c-54d285acab34" alt="" width="800">
+  <img src="https://github.com/zhengcongyin/Geocoding-Address-Parsing-Benchmark/assets/10716937/4efbb3b9-b4a1-444c-9ed8-d71f5d970f89" alt="" width="800">
+  <img src="https://github.com/zhengcongyin/Geocoding-Address-Parsing-Benchmark/assets/10716937/f9c0ad80-1860-4bca-b55f-04073f296bf1" alt="" width="800">
+</figure>
+
+
+
 ### Baseline models
 
 The `models` folder contains the implementations of the evaluated address parsers built upon five different models. Each model represents significant strides in the field of NLP and achieved SOTA performance previously. 
